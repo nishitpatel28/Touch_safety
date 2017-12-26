@@ -1,0 +1,54 @@
+import RPi.GPIO as GPIO
+import time
+import os
+import sys
+TouchPin = 27
+button = 22
+Buzzer_PIN = 24
+led=17
+timeout = time.time() + 10
+def setup():
+        GPIO.setmode(GPIO.BCM)       # Numbers GPIOs by physical location
+        GPIO.setup(TouchPin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        GPIO.setup(led,GPIO.OUT)
+        GPIO.setup(button,GPIO.IN,pull_up_down=GPIO.PUD_DOWN)
+def loop():
+        print("s")
+        while True:                
+                inputval = GPIO.input(button)
+                if(time.time()>timeout):
+                        GPIO.output(led,GPIO.LOW)
+                        break
+                elif(inputval == True):
+                        GPIO.output(led,GPIO.LOW)
+                        print('No action taken')
+                        sys.exit()
+                          
+                
+			
+
+def destroy():
+        GPIO.output(led, GPIO.LOW)     # led off
+if __name__ == "__main__":     # Program start from here
+        setup()
+        try:
+                while True:
+                        if(GPIO.input(TouchPin) == GPIO.HIGH):
+                                print 'T'
+                                GPIO.output(led,GPIO.HIGH)
+                                loop()
+                                print("sms sent")
+                                GPIO.output(led,GPIO.HIGH)
+                                #os.system("python send_sms.py")
+                                while True:
+                                        if(GPIO.input(button)==True):
+                                                GPIO.output(led, GPIO.LOW)
+                                                sys.exit()
+				#os.system("python sms_sent.py")
+                        
+		
+		#os.system("python send_sms.py")
+                		
+		
+        except KeyboardInterrupt:  # When 'Ctrl+C' is pressed, the child program destroy() will be  executed.
+                destroy()
